@@ -128,7 +128,7 @@ if [ "$DOCKER_USER" != "" ] && [ "$DOCKER_PASSWORD" != "" ]; then
     echo "Performing docker login -u "$DOCKER_USER"...."
     docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" -e "me@exmaple.com" $DOCKER_REPOSITORY
     exit_on_error $? "Can't login to the remote repo"
-fisr
+fi
 
 #name of the current branch
 #CURRNET_BRANCH=$(git rev-parse --abbrev-ref HEAD)
