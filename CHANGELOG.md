@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 9.2.0-2
+
+* Corrected docker login script
+
+
 ### 9.2.0-1
 
 * Corrected dockerbuild script parameters
