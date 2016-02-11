@@ -4,6 +4,11 @@
 CHANGELOG
 ---------
 
+### 9.2.0-1
+
+* Corrected dockerbuild script parameters
+
+
 ### 9.2.0
 
 * CEPH VERSION: Infernalis
