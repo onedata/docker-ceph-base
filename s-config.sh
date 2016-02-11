@@ -4,3 +4,6 @@
 DOCKER_IMAGE_NAME="ceph"
 DOCKER_REPOSITORY="docker.onedata.org"
 
+# uncomment this variable to enable debug logging to file
+#DEBUG_FILE="/tmp/sr-dockerbuild"
+

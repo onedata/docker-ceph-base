@@ -17,6 +17,33 @@ exit_on_error(){
 }
 
 
+debug() {
+    if [ ! -z $DEBUG_FILE ]; then
+        echo "$@" >> $DEBUG_FILE
+    fi
+}
+
+message(){
+    echo $@
+    debug $@
+}
+
+
+check_if_all_commited(){
+    debug "check_if_all_commited" $@
+
+    local no_of_changed_files=$(git status --porcelain |  wc -l)
+    if [ $no_of_changed_files == 0 ]; then
+        debug "check_if_all_commited: no_of_changed_files=$no_of_changed_files"
+        return 0 # 0 means true
+    else
+        changed_files=$(git status --porcelain )
+        echo "$changed_files" | head -n 20
+        debug "check_if_all_commited: no_of_changed_files=$no_of_changed_files"
+        return 1 # 1 means false
+    fi
+}
+
 
 function print_help(){
     echo "Usage: sr-dockerbuild [OPTIONS]"
@@ -90,6 +117,16 @@ esac
 shift # past argument or value
 done
 
+
+
+if check_if_all_commited; then
+    message "All files are commited in the current branch.";
+else
+    message "Please commit changes before you can generate changelog"
+    exit 1
+fi
+
+
 if [ "$DOCKER_USER" != "" ] && [ "$DOCKER_PASSWORD" != "" ]; then
     echo "Performing docker login"
     echo docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" -e "me@exmaple.com" $DOCKER_REPOSITORY
@@ -101,9 +138,12 @@ fi
 CURRNET_BRANCH=$(git status | sed -n '/On branch /s///p')
 
 CURRENT_GIT_NAME=$(git remote -v | head -n1 | awk '{print $2}' | sed 's/.*\///' | sed 's/\.git//')
+exit_on_error $? "Cannot obtain git name"
 
 # id of the current commit
 CURRNET_COMMIT=$(git rev-parse HEAD)
+exit_on_error $? "Cannot obtain head commit hash"
+
 
 # name of the current tag if it points onto the current commit
 CURRNET_TAG=$(git tag --points-at $CURRNET_COMMIT)
@@ -160,9 +200,9 @@ eval $DOCKER_BUILD_COMMAND
 exit_on_error $? "The build commannd failed: $DOCKER_BUILD_COMMAND"
 
 ## get the docker image sha
-DOCKER_BUILD_ID=$(docker inspect --format='{{.Id}}' $DOCKER_BUILD_NAME);
-exit_on_error $? "Obtaining docker build id failed"
-DOCKER_BUILD_ID="ID-${DOCKER_BUILD_ID:0:12}"
+#DOCKER_BUILD_ID=$(docker inspect --format='{{.Id}}' $DOCKER_BUILD_NAME);
+#exit_on_error $? "Obtaining docker build id failed"
+DOCKER_BUILD_ID="ID-${CURRNET_COMMIT:0:10}"
 
 echo "$DOCKER_BUILD_ID" > dockerimage.sha
 TAG_KEYS+=(":$DOCKER_BUILD_ID")
@@ -227,7 +267,13 @@ then
     done
 fi
 
+
 echo "=========================================================="
+echo "Image tags"
+cat dockerimage.sha
+echo "=========================================================="
+
+
 echo "Report on compilation of $CURRENT_GIT_NAME" > dockerimage.report.txt
 COUNT=0;
 while read p; do
@@ -245,4 +291,4 @@ while read p; do
   fi
   (( COUNT++ )) ;
 done < dockerimage.sha
-echo "=========================================================="
+
