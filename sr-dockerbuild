@@ -99,15 +99,12 @@ case $key in
     ;;
     -pu|--push)
     DOCKER_ENABLE_PUSH="1"
-    shift # past argument
     ;;
     -nocache)
     DOCKER_BUILD_NO_CACHE="-nocache"
-    shift # past argument
     ;;
     -r|--remove)
     DOCKER_ENABLE_REMOVE="1"
-    shift # past argument
     ;;
     *)
 
