@@ -6,6 +6,11 @@ CHANGELOG
 
 ### 9.2.0-3
 
+* Nice email for bamboo logins
+
+
+### 9.2.0-3
+
 * Corrected docker login script
 
 
