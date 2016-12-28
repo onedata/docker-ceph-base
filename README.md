@@ -1,7 +1,7 @@
 # docker.onedata.org/ceph-base
 
-This repository allows for building docker with *Ceph* filesystem version
-*9.2.0 INFERNALIS*. It starts single instance of *Monitor*, *OSD* and *MDS*.
+This repository allows for building docker with *Ceph* server version
+*10.2.0 JEWEL*. It starts single instance of *Monitor* and *OSD*.
 The docker is used to test *Ceph* storage helper functionality.
 
 # User Guide
